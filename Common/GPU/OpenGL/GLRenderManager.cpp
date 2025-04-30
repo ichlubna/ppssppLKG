@@ -37,7 +37,17 @@ GLRTexture::~GLRTexture() {
 	}
 }
 
-GLRenderManager::GLRenderManager(HistoryBuffer<FrameTimeData, FRAME_TIME_HISTORY_LENGTH> &frameTimeHistory) : frameTimeHistory_(frameTimeHistory) {
+int getFBSize(bool width)
+{
+    GLint dims[4] = {0};
+    glGetIntegerv(GL_VIEWPORT, dims);
+    if(width)
+        return dims[2];
+    return dims[3];
+}
+
+GLRenderManager::GLRenderManager(HistoryBuffer<FrameTimeData, FRAME_TIME_HISTORY_LENGTH> &frameTimeHistory) : frameTimeHistory_(frameTimeHistory), injection{getFBSize(true), getFBSize(false), "holo.conf"}
+{
 	// size_t sz = sizeof(GLRRenderData);
 	// _dbg_assert_(sz == 88);
 }
@@ -460,6 +470,7 @@ bool GLRenderManager::Run(GLRRenderThreadTask &task) {
 					swapIntervalFunction_(swapInterval_);
 				}
 			}
+            injection.render();
 			// This is the swapchain framebuffer flip.
 			if (swapFunction_) {
 				VLOG("  PULL: SwapFunction()");
@@ -512,8 +523,12 @@ bool GLRenderManager::Run(GLRRenderThreadTask &task) {
 			PostVRFrameRender();
 		}
 	} else {
-		queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, false, false);
-	}
+   
+        queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, true, false, 0);
+        injection.captureRender(0);
+        queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, false, false, 400);
+        injection.captureRender(1);
+        }
 
 	if (frameData.profile.enabled) {
 		frameData.profile.cpuEndTime = time_now_d();

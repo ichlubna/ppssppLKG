@@ -1,3 +1,6 @@
+Holo
+Only Gl and SDL
+
 PPSSPP - a fast and portable PSP emulator
 =========================================
 

@@ -621,7 +621,8 @@ retry_depth:
 	currentReadHandle_ = fbo->handle;
 }
 
-void GLQueueRunner::RunSteps(const std::vector<GLRStep *> &steps, GLFrameData &frameData, bool skipGLCalls, bool keepSteps, bool useVR) {
+void GLQueueRunner::RunSteps(const std::vector<GLRStep *> &steps, GLFrameData &frameData, bool skipGLCalls, bool keepSteps, bool useVR, float holoShift) {
+
 	if (skipGLCalls) {
 		if (keepSteps) {
 			return;
@@ -684,7 +685,7 @@ void GLQueueRunner::RunSteps(const std::vector<GLRStep *> &steps, GLFrameData &f
 				PreprocessStepVR(&step);
 				PerformRenderPass(step, renderCount == 1, renderCount == totalRenderCount, frameData.profile);
 			} else {
-				PerformRenderPass(step, renderCount == 1, renderCount == totalRenderCount, frameData.profile);
+				PerformRenderPass(step, renderCount == 1, renderCount == totalRenderCount, frameData.profile, holoShift);
 			}
 			break;
 		case GLRStepType::COPY:
@@ -763,7 +764,7 @@ static void EnableDisableVertexArrays(uint32_t prevAttr, uint32_t newAttr) {
 	}
 }
 
-void GLQueueRunner::PerformRenderPass(const GLRStep &step, bool first, bool last, GLQueueProfileContext &profile) {
+void GLQueueRunner::PerformRenderPass(const GLRStep &step, bool first, bool last, GLQueueProfileContext &profile, float holoShift) {
 	CHECK_GL_ERROR_IF_DEBUG();
 
 	PerformBindFramebufferAsRenderTarget(step);
@@ -1192,6 +1193,10 @@ void GLQueueRunner::PerformRenderPass(const GLRStep &step, bool first, bool last
 		}
 		case GLRRenderCommand::DRAW:
 		{
+            GLint prog = 0;
+            glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+            glUniform1f(glGetUniformLocation(prog, "u_holoShift"), holoShift);
+
 			GLRInputLayout *layout = c.draw.inputLayout;
 			GLuint buf = c.draw.vertexBuffer->buffer_;
 			_dbg_assert_(!c.draw.vertexBuffer->Mapped());

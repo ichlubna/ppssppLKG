@@ -18,6 +18,8 @@
 #include "Common/GPU/OpenGL/GLCommon.h"
 #include "Common/GPU/OpenGL/GLMemory.h"
 
+#include "GLinjection.hpp"
+
 class GLRInputLayout;
 class GLPushBuffer;
 
@@ -225,6 +227,7 @@ struct GLRRenderThreadTask {
 // directly in the destructor.
 class GLRenderManager {
 public:
+    GLInjection injection;
 	GLRenderManager(HistoryBuffer<FrameTimeData, FRAME_TIME_HISTORY_LENGTH> &frameTimeHistory);
 	~GLRenderManager();
 
