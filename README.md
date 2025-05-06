@@ -11,8 +11,9 @@ ViewPortionElement=0.99976
 Subp=0.000130208
 CameraFocusStep=0.001
 CameraSpacingStep=0.001
-InitCameraSpacing = 0
-InitFocusSpacing = 0
+InitCameraSpacing=0
+InitFocusSpacing=0
+Quilt=0
 ```
 The extensions works only with OpenGL rendering.
 
