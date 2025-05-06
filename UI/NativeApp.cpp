@@ -35,6 +35,8 @@
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <boost/algorithm/string/split.hpp> 
+#include <boost/algorithm/string/classification.hpp> 
 
 #if defined(_WIN32)
 #include "Windows/WindowsAudio.h"
@@ -163,6 +165,50 @@
 #endif
 
 #include <Core/HLE/Plugins.h>
+
+class HoloSettings
+{
+    public: 
+    std::map<std::string, float> params;
+    float holoDistance = 0;
+    float holoFocus = 0;
+
+    HoloSettings(std::string fileName)
+    {
+        std::ifstream file(fileName);
+        if(file.fail())
+            throw std::runtime_error("Cannot open file: "+fileName);
+        std::string line;
+        while (std::getline(file, line))
+        {
+            std::vector<std::string> tokens;
+            boost::split(tokens, line, boost::is_any_of("="), boost::token_compress_on);
+            params[tokens[0]] = std::stof(tokens[1]);
+        }
+
+        holoDistance = params["InitCameraSpacing"];
+        holoFocus = params["InitFocusSpacing"];
+    }
+    float operator[](std::string key){ return params[key];}
+    int i(std::string key){ return static_cast<int>(params[key]);}
+
+    void incrementDistance()
+    {
+        holoDistance += params["CameraSpacingStep"]; 
+    }
+    void decrementDistance()
+    {
+        holoDistance -= params["CameraSpacingStep"]; 
+    }
+    void incrementFocus()
+    {
+        holoFocus += params["CameraFocusStep"]; 
+    }
+    void decrementFocus()
+    {
+        holoFocus -= params["CameraFocusStep"]; 
+    }
+} holoSettings("holo.conf");
 
 bool HandleGlobalMessage(UIMessage message, const std::string &value);
 static void ProcessWheelRelease(InputKeyCode keyCode, double now, bool keyPress);
@@ -1156,7 +1202,7 @@ void NativeFrame(GraphicsContext *graphicsContext) {
 
 	int interval;
 	Draw::PresentMode presentMode = ComputePresentMode(g_draw, &interval);
-	g_draw->Present(presentMode, interval);
+	g_draw->Present(presentMode, interval, holoSettings.holoDistance, holoSettings.holoFocus);
 
 	if (resized) {
 		INFO_LOG(Log::G3D, "Resized flag set - recalculating bounds");
@@ -1325,6 +1371,15 @@ static void ProcessWheelRelease(InputKeyCode keyCode, double now, bool keyPress)
 
 bool NativeKey(const KeyInput &key) {
 	double now = time_now_d();
+
+    if(key.keyCode == NKCODE_PAGE_UP)
+        holoSettings.incrementDistance();
+    else if(key.keyCode == NKCODE_PAGE_DOWN)
+        holoSettings.decrementDistance();
+    else if(key.keyCode == NKCODE_MOVE_HOME)
+        holoSettings.incrementFocus();
+    else if(key.keyCode == NKCODE_MOVE_END)
+        holoSettings.decrementFocus();
 
 	// VR actions
 	if ((IsVREnabled() || g_Config.bForceVR) && !UpdateVRKeys(key)) {

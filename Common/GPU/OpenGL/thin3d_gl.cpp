@@ -367,7 +367,7 @@ public:
 
 	void BeginFrame(DebugFlags debugFlags) override;
 	void EndFrame() override;
-	void Present(PresentMode mode, int vblanks) override;
+	void Present(PresentMode mode, int vblanks, float holoDistance, float holoFocus) override;
 
 	int GetFrameCount() override {
 		return frameCount_;
@@ -819,8 +819,8 @@ void OpenGLContext::EndFrame() {
 	Invalidate(InvalidationFlags::CACHED_RENDER_STATE);
 }
 
-void OpenGLContext::Present(PresentMode presentMode, int vblanks) {
-	renderManager_.Present();
+void OpenGLContext::Present(PresentMode presentMode, int vblanks, float holoDistance, float holoFocus) {
+	renderManager_.Present(holoDistance, holoFocus);
 	frameCount_++;
 }
 

@@ -864,7 +864,7 @@ public:
 
 	// vblanks is only relevant in FIFO present mode.
 	// NOTE: Not all backends support vblanks > 1. Some backends also can't change presentation mode immediately.
-	virtual void Present(PresentMode presentMode, int vblanks) = 0;
+	virtual void Present(PresentMode presentMode, int vblanks, float holoDistance=0, float holoFocus=0) = 0;
 
 	// This should be avoided as much as possible, in favor of clearing when binding a render target, which is native
 	// on Vulkan.

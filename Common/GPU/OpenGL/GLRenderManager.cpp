@@ -11,6 +11,8 @@
 #include "Common/StringUtils.h"
 #include "Common/Math/math_util.h"
 
+#include "SDL2/SDL.h"
+
 #if 0 // def _DEBUG
 #define VLOG(...) INFO_LOG(Log::G3D, __VA_ARGS__)
 #else
@@ -436,7 +438,12 @@ void GLRenderManager::Finish() {
 	}
 }
 
-void GLRenderManager::Present() {
+float holoCamDistance = 0;
+float holoCamFocus = 0;
+void GLRenderManager::Present(float holoDistance=0, float holoFocus=0) {
+    holoCamDistance = holoDistance;
+    holoCamFocus = holoFocus;
+
 	GLRRenderThreadTask *presentTask = new GLRRenderThreadTask(GLRRunType::PRESENT);
 	presentTask->frame = curFrame_;
 	{
@@ -523,12 +530,16 @@ bool GLRenderManager::Run(GLRRenderThreadTask &task) {
 			PostVRFrameRender();
 		}
 	} else {
-   
-        queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, true, false, 0);
-        injection.captureRender(0);
-        queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, false, false, 400);
-        injection.captureRender(1);
+
+    printf("%f\n", holoCamDistance);
+        for(int i=0; i<injection.views(); i++)
+        {
+            bool keepData = injection.views()-1 > i;
+            glClear(GL_COLOR_BUFFER_BIT);
+            queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, keepData, false, injection.viewOffset(i, holoCamDistance));
+            injection.captureRender(i);
         }
+       }
 
 	if (frameData.profile.enabled) {
 		frameData.profile.cpuEndTime = time_now_d();

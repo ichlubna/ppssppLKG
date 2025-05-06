@@ -256,7 +256,7 @@ public:
 	void BeginFrame(bool enableProfiling);
 	// Can run on a different thread!
 	void Finish();
-	void Present();
+	void Present(float holoDistance, float holoFocus);
 
 	// Creation commands. These were not needed in Vulkan since there we can do that on the main thread.
 	// We pass in width/height here even though it's not strictly needed until we support glTextureStorage
