@@ -494,6 +494,7 @@ bool GenerateVertexShader(const VShaderID &id, char *buffer, const ShaderLanguag
 		}
 
         WRITE(p, "uniform float u_holoShift=0;\n");
+        WRITE(p, "uniform float u_holoFocus=0;\n");
 		if (useHWTransform) {
 			// When transforming by hardware, we need a great deal more uniforms...
 			// TODO: Use 4x3 matrices where possible. Though probably doesn't matter much.
@@ -934,7 +935,9 @@ bool GenerateVertexShader(const VShaderID &id, char *buffer, const ShaderLanguag
 				WRITE(p, "  vec4 outPos = mul(u_proj_lens, viewPos);\n");
 				WRITE(p, "  vec4 orgPos = mul(u_proj, viewPos);\n");
 			} else {
-				WRITE(p, "  vec4 outPos = mul(u_proj, viewPos);\n");
+				WRITE(p, "  mat4 focusProj = u_proj;\n");
+				WRITE(p, "  focusProj[2][0] = u_holoFocus;\n");
+				WRITE(p, "  vec4 outPos = mul(focusProj, viewPos);\n");
 			}
 		}
 

@@ -202,11 +202,11 @@ class HoloSettings
     }
     void incrementFocus()
     {
-        holoFocus += params["CameraFocusStep"]; 
+        holoFocus += params["FocusSpacingStep"]; 
     }
     void decrementFocus()
     {
-        holoFocus -= params["CameraFocusStep"]; 
+        holoFocus -= params["FocusSpacingStep"]; 
     }
 } holoSettings("holo.conf");
 

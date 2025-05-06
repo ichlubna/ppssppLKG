@@ -535,7 +535,7 @@ bool GLRenderManager::Run(GLRRenderThreadTask &task) {
         {
             bool keepData = injection.views()-1 > i;
             glClear(GL_COLOR_BUFFER_BIT);
-            queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, keepData, false, injection.viewOffset(i, holoCamDistance));
+            queueRunner_.RunSteps(task.steps, frameData, skipGLCalls_, keepData, false, injection.viewOffset(i, holoCamDistance), injection.viewOffset(i, holoCamFocus));
             injection.captureRender(i);
         }
        }
