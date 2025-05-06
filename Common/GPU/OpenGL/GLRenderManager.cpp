@@ -531,7 +531,6 @@ bool GLRenderManager::Run(GLRRenderThreadTask &task) {
 		}
 	} else {
 
-    printf("%f\n", holoCamDistance);
         for(int i=0; i<injection.views(); i++)
         {
             bool keepData = injection.views()-1 > i;

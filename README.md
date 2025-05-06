@@ -1,5 +1,20 @@
-Holo
-Only Gl and SDL
+This repository is an extension of the original repo. This code supports multiview rendering which can be used to play the game on a 3D display by Looking Glass Factory. The following parameters need to be added to the holo.conf file. The parameters are calibration values for the given 3D display and can be retreived by using [this](https://github.com/ichlubna/getLKGCalibration) tool. The keys Home and End are used to refocus the scene, Page Up and Down to change the camera spacing. The rows, cols, spacing, and steps can be adjusted independently on the display model. The quilt value decides if the 3D display native format is displayed or the grid with the views. The init values are default camera settings at the beginning of the game. 
+
+```
+[Holo]
+Rows=3
+Cols=3
+Tilt=-0.1153
+Pitch=354.421
+Center=0.042
+ViewPortionElement=0.99976
+Subp=0.000130208
+CameraFocusStep=0.001
+CameraSpacingStep=0.001
+InitCameraSpacing = 0
+InitFocusSpacing = 0
+```
+The extensions works only with OpenGL rendering.
 
 PPSSPP - a fast and portable PSP emulator
 =========================================

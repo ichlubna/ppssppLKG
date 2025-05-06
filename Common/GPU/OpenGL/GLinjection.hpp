@@ -108,7 +108,7 @@ class GLInjection
         glBindFramebuffer(GL_FRAMEBUFFER, originalFbo);
     }
 
-    void render(bool renderHolo=true)
+    void render()
     {
         GLint originalFbo = 0;
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &originalFbo);
@@ -116,7 +116,6 @@ class GLInjection
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, originalFbo); 
         glBindTexture(GL_TEXTURE_2D, fboTexture);
         glUseProgram(shaderProgram);  
-/*
         glUniform1f(glGetUniformLocation(shaderProgram, "holoTilt"), params["Tilt"]);
         glUniform1f(glGetUniformLocation(shaderProgram, "holoPitch"), params["Pitch"]);
         glUniform1f(glGetUniformLocation(shaderProgram, "holoCenter"), params["Center"]);
@@ -124,8 +123,8 @@ class GLInjection
         glUniform1f(glGetUniformLocation(shaderProgram, "holoSubp"), params["Subp"]);
         glUniform1i(glGetUniformLocation(shaderProgram, "viewCount"), views());
         glUniform1i(glGetUniformLocation(shaderProgram, "holoCols"), params["Cols"]);
-        glUniform1i(glGetUniformLocation(shaderProgram, "holoRows"), params["Rows"]);*/
-        glUniform1i(glGetUniformLocation(shaderProgram, "mode"), renderHolo);
+        glUniform1i(glGetUniformLocation(shaderProgram, "holoRows"), params["Rows"]);
+        glUniform1i(glGetUniformLocation(shaderProgram, "mode"), params["Quilt"]);
         
         glBindVertexArray(emptyVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
