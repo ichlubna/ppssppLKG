@@ -48,7 +48,7 @@ int getFBSize(bool width)
     return dims[3];
 }
 
-GLRenderManager::GLRenderManager(HistoryBuffer<FrameTimeData, FRAME_TIME_HISTORY_LENGTH> &frameTimeHistory) : frameTimeHistory_(frameTimeHistory), injection{getFBSize(true), getFBSize(false), "holo.conf"}
+GLRenderManager::GLRenderManager(HistoryBuffer<FrameTimeData, FRAME_TIME_HISTORY_LENGTH> &frameTimeHistory) : frameTimeHistory_(frameTimeHistory), injection{getFBSize(true), getFBSize(false), 1280, 720, "holo.conf"}
 {
 	// size_t sz = sizeof(GLRRenderData);
 	// _dbg_assert_(sz == 88);
